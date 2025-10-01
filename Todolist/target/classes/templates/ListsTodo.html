@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>همه تسک‌ها - To Do List</title>
+    <style>
+        :root {
+            --primary: #3a7bd5;
+            --secondary: #00d2ff;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --white: #ffffff;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: var(--white);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.3);
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .page-title {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 2.5rem;
+            font-size: 2.2rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 50%;
+            transform: translateX(50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .task-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1.8rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-right: 5px solid #ddd;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-card.high { border-right-color: var(--danger); }
+        .task-card.medium { border-right-color: var(--warning); }
+        .task-card.low { border-right-color: var(--success); }
+
+        .task-priority {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 0.6rem;
+            border-radius: 50px;
+            color: var(--white);
+        }
+
+        .task-priority.high { background: var(--danger); }
+        .task-priority.medium { background: var(--warning); color: var(--dark); }
+        .task-priority.low { background: var(--success); }
+
+        .task-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.8rem;
+        }
+
+        .task-dateTodo {
+            font-size: 0.95rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .task-desc {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 0.6rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: var(--white);
+        }
+
+        .btn-edit:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: var(--white);
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .task-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .task-checkbox input[type="checkbox"] {
+            width: 1.4rem;
+            height: 1.4rem;
+            accent-color: var(--success);
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #555;
+            font-size: 1.2rem;
+        }
+
+        .empty-state .emoji {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        footer {
+            background: var(--dark);
+            color: var(--light);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 5rem;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .copyright {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .tasks-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.6rem;
+            }
+
+            .task-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">To<span>Do</span>List</div>
+    <div class="nav-links">
+        <a href="http://localhost:8080/pages" class="nav-link">صفحه اصلی</a>
+        <a href="http://localhost:8080/pages/all" class="nav-link active">همه تسک‌ها</a>
+        <a href="http://localhost:8080/pages/add" class="nav-link">افزودن تسک</a>
+    </div>
+</header>
+
+<main class="container">
+    <h1 class="page-title">همه تسک‌های شما</h1>
+
+    <div id="tasksContainer" class="tasks-grid">
+        <!-- تسک‌ها اینجا نمایش داده میشن -->
+    </div>
+
+    <!-- حالت خالی -->
+    <div id="emptyState" class="empty-state" style="display: none;">
+        <div class="emoji">📋</div>
+        <h3>هیچ تسکی وجود ندارد</h3>
+        <p>برای شروع، یک تسک جدید اضافه کنید.</p>
+        <a href="http://localhost:8080/pages/add" class="btn-action btn-edit" style="display: inline-block; margin-top: 1rem;">ثبت اولین تسک ➕</a>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-content">
+        <p>To Do List - مدیریت هوشمند تسک‌ها</p>
+        <div class="copyright">
+            &copy; 2024 To Do List. تمامی حقوق محفوظ است.
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async function () {
+        const tasksContainer = document.getElementById('tasksContainer');
+        const emptyState = document.getElementById('emptyState');
+
+        async function loadTasks() {
+            try {
+                const response = await fetch('http://localhost:8080/todolists/allTodo');
+                if (!response.ok) throw new Error('خطا در دریافت داده‌ها');
+
+                const data = await response.json();
+                console.log('داده:', data);
+                const tasks =
+                    Array.isArray(data) ? data : data.content || [];
+
+                if (data.length === 0) {
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                emptyState.style.display = 'none';
+
+                tasks.forEach(task => {
+                    const card = document.createElement('div');
+                    card.className = 'task-card';
+                    card.dataset.id = task.idTodo;
+
+                    card.innerHTML = `
+                        <div class="tasks"></div>
+                        <h3 class="task-title">${tasks.nameTodo || 'بدون عنوان'}</h3>
+                        <div class="task-dateTodo">📅 ${date}</div>
+                        <p class="task-desc">${tasks.description || 'بدون توضیحات'}</p>
+                        <div class="task-actions">
+                            <div class="task-checkbox">
+                                <input type="checkbox" ${tasks.completed ? 'checked' : ''} id="check-${tasks.idTodo}">
+                                <label for="check-${tasks.idTodo}">انجام شده</label>
+                            </div>
+                            <button class="btn-action btn-delete" onclick="deleteTask(${tasks.idTodo})">حذف</button>
+                        </div>
+                    `;
+
+
+                    // اضافه کردن event listener برای چک‌باکس
+                    const checkbox = card.querySelector(`#check-${task.idTodo}`);
+                    checkbox.addEventListener('change', async function () {
+                        await updateTaskStatus(task.idTodo, this.checked);
+                    });
+
+                    tasksContainer.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+                alert('عدم اتصال به سرور. لطفاً بعداً دوباره امتحان کنید.');
+            }
+        }
+
+        // آپدیت وضعیت انجام شده
+        async function updateTaskStatus(id, completed) {
+            try {
+                const response = await fetch('http://localhost:8080/todolists/update/'${id}, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ idTodo: id, completed })
+                });
+
+                if (!response.ok) {
+                    throw new Error('خطا در بروزرسانی وضعیت');
+                }
+
+                // بدون رفرش، فقط پیام
+                console.log(`وضعیت تسک ${id} به ${completed ? 'انجام شده' : 'در حال انجام'} تغییر کرد.`);
+            } catch (error) {
+                console.error('Error updating task:', error);
+                alert('خطا در بروزرسانی وضعیت تسک.');
+                // برگرداندن وضعیت قبلی در صورت خطا
+                loadTasks(); // دوباره بارگذاری
+            }
+        }
+
+        // حذف تسک
+        window.deleteTask = async function(id) {
+            if (!confirm('آیا از حذف این تسک مطمئن هستید؟')) return;
+
+            try {
+                const response = await fetch(`http://localhost:8080/todolists/delete/${id}`, {
+                    method: 'GET'
+                });
+
+                if (response.ok) {
+                    alert('تسک با موفقیت حذف شد');
+                    loadTasks(); // دوباره بارگذاری لیست
+                } else {
+                    alert('خطا در حذف تسک');
+                }
+            } catch (error) {
+                alert('خطا در ارتباط با سرور');
+            }
+        };
+
+
+        loadTasks();
+
+
+    });
+</script>
+</body>
+</html>
