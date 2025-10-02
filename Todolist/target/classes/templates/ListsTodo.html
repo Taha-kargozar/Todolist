@@ -108,36 +108,6 @@
             gap: 2rem;
         }
 
-        .task-card {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 1.8rem;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            border-right: 5px solid #ddd;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .task-card.high { border-right-color: var(--danger); }
-        .task-card.medium { border-right-color: var(--warning); }
-        .task-card.low { border-right-color: var(--success); }
-
-        .task-priority {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 0.3rem 0.6rem;
-            border-radius: 50px;
-            color: var(--white);
-        }
-
-        .task-priority.high { background: var(--danger); }
-        .task-priority.medium { background: var(--warning); color: var(--dark); }
-        .task-priority.low { background: var(--success); }
-
         .task-title {
             font-size: 1.4rem;
             font-weight: 700;
@@ -277,9 +247,6 @@
                 font-size: 1.6rem;
             }
 
-            .task-card {
-                padding: 1.5rem;
-            }
         }
     </style>
 </head>
@@ -351,7 +318,12 @@
                  const date = task.dateTodo
 
                  card.innerHTML = `
-                        <h3 class="task-title">${task.nameTodo || 'بدون عنوان'}</h3>
+                        <h3 class="task-title">
+    <a href="http://localhost:8080/pages/edit/I?id=${task.idTodo}"
+       style="text-decoration: none; color: inherit;">
+        ${task.nameTodo}
+    </a>
+</h3>
                         <div class="task-dateTodo">📅 ${dateIR}</div>
                         <div class="task-dateTodo">📅 ${date}</div>
                         <p class="task-desc">${task.description || 'بدون توضیحات'}</p>

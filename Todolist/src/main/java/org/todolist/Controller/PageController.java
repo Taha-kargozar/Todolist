@@ -15,4 +15,7 @@ public class PageController {
 
     @GetMapping("/all")
     public String ListsTodo() {return "ListsTodo";}
+
+    @GetMapping("/edit/{id}")
+    public String Edit() {return "Edit";}
 }

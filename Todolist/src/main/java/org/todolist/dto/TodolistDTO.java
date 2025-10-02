@@ -55,14 +55,5 @@ public class TodolistDTO {
         this.dateTodo = dateTodo;
     }
 
-    public Todolists converter() {
-        Todolists todolists = new Todolists();
-        todolists.setNameTodo(nameTodo) ;
-        todolists.setIdTodo(idTodo);
-        todolists.setCompleted(completed);
-        todolists.setDescription(description);
-        todolists.setDateTodo(dateTodo);
-        return todolists;
-    }
 
 }

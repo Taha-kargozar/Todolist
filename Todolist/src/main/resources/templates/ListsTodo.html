@@ -318,7 +318,12 @@
                  const date = task.dateTodo
 
                  card.innerHTML = `
-                        <h3 class="task-title">${task.nameTodo || 'بدون عنوان'}</h3>
+                        <h3 class="task-title">
+    <a href="http://localhost:8080/pages/edit/I?id=${task.idTodo}"
+       style="text-decoration: none; color: inherit;">
+        ${task.nameTodo}
+    </a>
+</h3>
                         <div class="task-dateTodo">📅 ${dateIR}</div>
                         <div class="task-dateTodo">📅 ${date}</div>
                         <p class="task-desc">${task.description || 'بدون توضیحات'}</p>

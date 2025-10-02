@@ -33,7 +33,7 @@ public class TodoController {
         todolists.setCompleted(Boolean.FALSE);
         todolists.setDateTodo(todolistDTO.getDateTodo());
         todoService.CreateTodo(todolists);
-        return ResponseEntity.ok().body(Long.valueOf(200));
+        return ResponseEntity.ok().body(null);
     }
 
 
@@ -43,13 +43,13 @@ public class TodoController {
         return ResponseEntity.ok(todos);
     }
 
-    @GetMapping("getById/{id}")
-    public ResponseEntity<Todolists> getbyid(@PathVariable Long id) {
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<Todolists> getById(@PathVariable Long id) {
         try {
-            todoService.GetById(id);
-            return ResponseEntity.ok().body(null);
+            Todolists todo = todoService.GetById(id);
+            return ResponseEntity.ok(todo); // ✅ خود تسک رو برمی‌گردونه
         } catch (RuntimeException e) {
-            return ResponseEntity.status(409).body(null);
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -63,17 +63,28 @@ public class TodoController {
         }
     }
 
-    @PutMapping("update/{id}")
-    public ResponseEntity<Todolists> update(@RequestBody @PathVariable TodolistDTO todolistDTO) {
-        Todolists extodo = todoService.GetById(todolistDTO.getIdTodo());
-        extodo.setDateTodo(todolistDTO.getDateTodo());
-        extodo.setDescription(todolistDTO.getDescription());
-        extodo.setNameTodo(todolistDTO.getNameTodo());
-        extodo.setCompleted(todolistDTO.isCompleted());
-        Todolists updatetodo = todoService.UpdateTodo(extodo);
-        return ResponseEntity.ok().body(updatetodo);
-    }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Todolists> update(@PathVariable Long id, @RequestBody TodolistDTO dto) {
 
+        try {
+            if (!id.equals(dto.getIdTodo())) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            Todolists existing = todoService.GetById(id);
+
+            existing.setNameTodo(dto.getNameTodo());
+            existing.setDescription(dto.getDescription());
+            existing.setDateTodo(dto.getDateTodo());
+            existing.setCompleted(dto.isCompleted());
+
+            Todolists updated = todoService.UpdateTodo(existing);
+            return ResponseEntity.ok(updated);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
     @PatchMapping("/toggle/{id}")
     public ResponseEntity<?> toggleCompleted(@PathVariable Long id, @RequestBody Map<String, Boolean> body) {
         Boolean completed = body.get("completed");
