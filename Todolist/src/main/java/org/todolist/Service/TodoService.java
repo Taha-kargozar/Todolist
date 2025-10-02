@@ -16,5 +16,4 @@ public interface TodoService {
 
     Todolists DeleteTodo(Long Id);
 
-    void ChangeCompleted(Todolists todolists,Boolean complete);
 }

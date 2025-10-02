@@ -313,117 +313,113 @@
     <div class="footer-content">
         <p>To Do List - مدیریت هوشمند تسک‌ها</p>
         <div class="copyright">
-            &copy; 2024 To Do List. تمامی حقوق محفوظ است.
+            &copy; created by taha-kargozar 2025
         </div>
     </div>
 </footer>
 
 <script>
-    document.addEventListener('DOMContentLoaded', async function () {
-        const tasksContainer = document.getElementById('tasksContainer');
-        const emptyState = document.getElementById('emptyState');
 
-        async function loadTasks() {
-            try {
-                const response = await fetch('http://localhost:8080/todolists/allTodo');
-                if (!response.ok) throw new Error('خطا در دریافت داده‌ها');
+ document.addEventListener('DOMContentLoaded', async function () {
+     const container = document.getElementById('tasksContainer');
+     const emptyState = document.getElementById('emptyState');
 
-                const data = await response.json();
-                console.log('داده:', data);
-                const tasks =
-                    Array.isArray(data) ? data : data.content || [];
+     // دریافت داده از API
+     async function loadTasks() {
+         try {
+             const response = await fetch('http://localhost:8080/todolists/allTodo');
+             if (!response.ok) throw new Error('خطا در دریافت داده‌ها');
 
-                if (data.length === 0) {
-                    emptyState.style.display = 'block';
-                    return;
-                }
+             const data = await response.json();
+             const tasks = Array.isArray(data) ? data : (data.content || []);
 
-                emptyState.style.display = 'none';
+             container.innerHTML = '';
 
-                tasks.forEach(task => {
-                    const card = document.createElement('div');
-                    card.className = 'task-card';
-                    card.dataset.id = task.idTodo;
+             if (tasks.length === 0) {
+                 emptyState.style.display = 'block';
+                 return;
+             }
 
-                    card.innerHTML = `
-                        <div class="tasks"></div>
-                        <h3 class="task-title">${tasks.nameTodo || 'بدون عنوان'}</h3>
+             emptyState.style.display = 'none';
+
+             tasks.forEach(task => {
+                 const card = document.createElement('div');
+                 card.className = `task-card ${task.priority || 'low'}`;
+                 card.dataset.id = task.idTodo;
+
+                 const dateIR = task.dateTodo ? new Date(task.dateTodo).toLocaleDateString('fa-IR') : 'نا مشخص';
+                 const date = task.dateTodo
+
+                 card.innerHTML = `
+                        <h3 class="task-title">${task.nameTodo || 'بدون عنوان'}</h3>
+                        <div class="task-dateTodo">📅 ${dateIR}</div>
                         <div class="task-dateTodo">📅 ${date}</div>
-                        <p class="task-desc">${tasks.description || 'بدون توضیحات'}</p>
+                        <p class="task-desc">${task.description || 'بدون توضیحات'}</p>
                         <div class="task-actions">
                             <div class="task-checkbox">
-                                <input type="checkbox" ${tasks.completed ? 'checked' : ''} id="check-${tasks.idTodo}">
-                                <label for="check-${tasks.idTodo}">انجام شده</label>
+                                <input type="checkbox" ${task.completed ? 'checked' : ''} id="check-${task.idTodo}">
+                                <label for="check-${task.idTodo}">انجام شده</label>
                             </div>
-                            <button class="btn-action btn-delete" onclick="deleteTask(${tasks.idTodo})">حذف</button>
+                            <button class="btn-action btn-delete" onclick="deleteTask(${task.idTodo})">حذف</button>
                         </div>
                     `;
 
+                 const checkbox = card.querySelector(`#check-${task.idTodo}`);
+                 checkbox.addEventListener('change', async function () {
+                     await updateTaskStatus(task.idTodo, this.checked);
+                 });
 
-                    // اضافه کردن event listener برای چک‌باکس
-                    const checkbox = card.querySelector(`#check-${task.idTodo}`);
-                    checkbox.addEventListener('change', async function () {
-                        await updateTaskStatus(task.idTodo, this.checked);
-                    });
+                 container.appendChild(card);
+             });
+         } catch (error) {
+             console.error('Error loading tasks:', error);
+             container.innerHTML = `<div class="empty-state"><p>خطا: ${error.message}</p></div>`;
+         }
+     }
 
-                    tasksContainer.appendChild(card);
-                });
-            } catch (error) {
-                console.error('Error loading tasks:', error);
-                alert('عدم اتصال به سرور. لطفاً بعداً دوباره امتحان کنید.');
-            }
-        }
+     async function updateTaskStatus(id, completed) {
+         try {
+             const response = await fetch(`http://localhost:8080/todolists/toggle/${id}`, {
+                 method: 'PATCH',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify({ completed: completed })
+             });
 
-        // آپدیت وضعیت انجام شده
-        async function updateTaskStatus(id, completed) {
-            try {
-                const response = await fetch('http://localhost:8080/todolists/update/'${id}, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ idTodo: id, completed })
-                });
+             if (response.ok) {
+                 console.log('وضعیت با موفقیت به روز شد');
+             } else {
+                 alert('خطا در بروزرسانی وضعیت');
+             }
+         } catch (error) {
+             console.error('Error:', error);
+             alert('عدم اتصال به سرور');
+         }
+     }
+     // حذف تسک
+     window.deleteTask = async function(id) {
+         if (!confirm('آیا از حذف این تسک مطمئن هستید؟')) return;
 
-                if (!response.ok) {
-                    throw new Error('خطا در بروزرسانی وضعیت');
-                }
+         try {
+             const response = await fetch(`http://localhost:8080/todolists/delete/${id}`, {
+                 method: 'GET'
+             });
 
-                // بدون رفرش، فقط پیام
-                console.log(`وضعیت تسک ${id} به ${completed ? 'انجام شده' : 'در حال انجام'} تغییر کرد.`);
-            } catch (error) {
-                console.error('Error updating task:', error);
-                alert('خطا در بروزرسانی وضعیت تسک.');
-                // برگرداندن وضعیت قبلی در صورت خطا
-                loadTasks(); // دوباره بارگذاری
-            }
-        }
+             if (response.ok) {
+                 alert('تسک با موفقیت حذف شد');
+                 loadTasks();
+             } else {
+                 alert('خطا در حذف تسک');
+             }
+         } catch (error) {
+             alert('خطا در ارتباط با سرور');
+         }
+     };
 
-        // حذف تسک
-        window.deleteTask = async function(id) {
-            if (!confirm('آیا از حذف این تسک مطمئن هستید؟')) return;
-
-            try {
-                const response = await fetch(`http://localhost:8080/todolists/delete/${id}`, {
-                    method: 'GET'
-                });
-
-                if (response.ok) {
-                    alert('تسک با موفقیت حذف شد');
-                    loadTasks(); // دوباره بارگذاری لیست
-                } else {
-                    alert('خطا در حذف تسک');
-                }
-            } catch (error) {
-                alert('خطا در ارتباط با سرور');
-            }
-        };
-
-
-        loadTasks();
-
-
-    });
+     loadTasks();
+     setInterval(loadTasks, 30000);
+ });
 </script>
 </body>
 </html>

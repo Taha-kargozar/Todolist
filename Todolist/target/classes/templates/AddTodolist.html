@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- تصحیح nameTodo -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ثبت تسک جدید - To Do List</title>
     <style>
         :root {
@@ -299,7 +299,7 @@
     <div class="form-card">
         <h1 class="form-title">ثبت تسک جدید</h1>
 
-        <form id="taskForm" novalidate> <!-- تغییر از todoForm به taskForm -->
+        <form id="taskForm" novalidate>
             <div class="form-group">
                 <label class="form-label">عنوان تسک *</label>
                 <input type="text" id="taskTitle" class="form-control" placeholder="عنوان کار خود را وارد کنید..." required>
@@ -307,7 +307,7 @@
 
             <div class="form-group">
                 <label class="form-label">تاریخ انجام *</label>
-                <input type="date" id="dueDate" class="form-control" required> <!-- تغییر از dateTodo به date -->
+                <input type="date" id="dueDate" class="form-control" required>
             </div>
 
             <div class="form-group">
@@ -327,12 +327,11 @@
     <div class="footer-content">
         <p>To Do List - مدیریت هوشمند تسک‌ها</p>
         <div class="copyright">
-            &copy; 2024 To Do List. تمامی حقوق محفوظ است.
+            &copy; created by taha-kargozar 2025
         </div>
     </div>
 </footer>
 
-<!-- استایل spinner باید قبل از اسکریپت باشه -->
 <style>
     .spinner-border {
         display: inline-block;
@@ -352,10 +351,10 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // تنظیم تاریخ امروز
+
         document.getElementById('dueDate').valueAsDate = new Date();
 
-        // نمایش پیام
+
         function showAlert(message, type = 'success') {
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
@@ -380,7 +379,7 @@
             }, 5000);
         }
 
-        // فرم ثبت تسک
+
         document.getElementById('taskForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 

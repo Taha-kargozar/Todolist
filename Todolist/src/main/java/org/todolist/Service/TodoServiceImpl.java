@@ -62,10 +62,4 @@ public class TodoServiceImpl implements TodoService {
         return null;
     }
 
-    @Override
-    public void ChangeCompleted(Todolists todolists, Boolean complete) {
-        todolists.setCompleted(complete);
-        todoRepo.save(todolists);
-    }
-
 }
