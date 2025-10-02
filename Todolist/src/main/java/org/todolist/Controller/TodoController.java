@@ -26,7 +26,7 @@ public class TodoController {
 
 
     @PostMapping("/addTodo")
-    public ResponseEntity<Long> save(@RequestBody TodolistDTO todolistDTO) {
+    public ResponseEntity<Long> save(@RequestBody @Valid TodolistDTO todolistDTO) {
         Todolists todolists = new Todolists();
         todolists.setDescription(todolistDTO.getDescription());
         todolists.setNameTodo(todolistDTO.getNameTodo());
@@ -47,7 +47,7 @@ public class TodoController {
     public ResponseEntity<Todolists> getById(@PathVariable Long id) {
         try {
             Todolists todo = todoService.GetById(id);
-            return ResponseEntity.ok(todo); // ✅ خود تسک رو برمی‌گردونه
+            return ResponseEntity.ok(todo);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -97,4 +97,5 @@ public class TodoController {
 
         return ResponseEntity.ok(todoService.UpdateTodo(todo));
     }
+
 }

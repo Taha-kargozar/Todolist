@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.todolist.Execption.NotFoundException;
+import org.todolist.Execption.NullException;
 import org.todolist.Model.Todolists;
 import org.todolist.Repository.TodoRepo;
 
@@ -22,11 +24,11 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public Todolists CreateTodo(Todolists todolists) {
         if (todolists.getNameTodo() == null || todolists.getNameTodo().trim().isEmpty()) {
-            throw new RuntimeException("title is empty");
+            throw new NullException("title is empty");
         } else if (todolists.getDescription() == null || todolists.getDescription().trim().isEmpty()) {
-            throw new RuntimeException("desc is empty");
+            throw new NullException("desc is empty");
         } else if (todolists.getDateTodo() == null) {
-            throw new RuntimeException("date is null");
+            throw new NullException("date is null");
         } else if (todolists.getDateTodo().isBefore(LocalDate.now())) {
             throw new RuntimeException("date should not in the past");
         }
@@ -46,18 +48,18 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public Todolists GetById(Long id) {
         return todoRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("todolist.not.found"));
+                .orElseThrow(() -> new NotFoundException("todolist.not.found"));
     }
 
     @Override
     public Todolists DeleteTodo(Long Id) {
         if (Id == null || Id <= 0) {
-            throw new RuntimeException("id is not true");
+            throw new NotFoundException("id is not true");
         }
         if (todoRepo.existsById(Id)) {
             todoRepo.deleteById(Id);
         } else {
-            throw  new RuntimeException("todo not found");
+            throw  new NotFoundException("todo not found");
         }
         return null;
     }
